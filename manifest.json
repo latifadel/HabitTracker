@@ -1,10 +1,10 @@
 {
-  "name": "Flower - Habit Tracker PWA",
-  "short_name": "Flower",
+  "name": "Flower Tracker - Habit Tracker PWA",
+  "short_name": "FlowerTracker",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#fdfdfd",
-  "theme_color": "#ebf5e9",
+  "background_color": "#fafafa",
+  "theme_color": "#7cb342",
   "icons": [
     {
       "src": "./images/icon-192.png",
