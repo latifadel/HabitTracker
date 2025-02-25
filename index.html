@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower - Habit Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flower Habit Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Flower Habit Tracker</h1>
-    </header>
-    <main>
-        <section id="garden">
-            <h2>Your Garden</h2>
-            <!-- Placeholder for flowers -->
-        </section>
-        <section id="controls">
-            <button id="water-button">Water Flowers</button>
-        </section>
-    </main>
-    <footer>
-        <p>Developed by [Your Name]</p>
-    </footer>
-    <script src="app.js"></script>
+  <header>
+    <h1>My Garden</h1>
+    <button id="add-habit">➕ New Habit</button>
+  </header>
+  
+  <main id="garden"></main>
+  
+  <dialog id="habit-modal">
+    <!-- Habit creation form -->
+  </dialog>
+
+  <script src="app.js"></script>
 </body>
 </html>
