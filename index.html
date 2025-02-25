@@ -3,38 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Flower - Habit Tracker PWA</title>
+  <title>Flower Tracker - Habit Tracker PWA</title>
   <link rel="stylesheet" href="./style.css" />
   <link rel="manifest" href="./manifest.json" />
   <script defer src="./app.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Flower - Habit Tracker PWA</h1>
+  <header class="main-header">
+    <div class="logo-container">
+      <img src="./images/logo.png" alt="Flower Tracker Logo" class="logo" />
+      <h1>Flower Tracker</h1>
+    </div>
+    <button id="dark-mode-toggle" class="dark-mode-toggle">Toggle Dark Mode</button>
   </header>
 
   <main id="app">
-    <!-- Habit input and list section -->
     <section class="habit-section">
       <h2>Your Habits</h2>
       <div class="habit-input">
-        <input type="text" id="new-habit-name" placeholder="Enter new habit name..." />
+        <input
+          type="text"
+          id="new-habit-name"
+          placeholder="Enter new habit name..."
+        />
         <button id="add-habit-btn">Add Habit</button>
       </div>
       <ul id="habits-list"></ul>
     </section>
 
-    <!-- Flower display section -->
     <section class="flower-section">
       <h2>Selected Flower</h2>
       <div id="flower-details">
-        <p>Select a habit to see its flower</p>
+        <p class="placeholder">Select a habit to see its flower</p>
       </div>
+    </section>
+
+    <section class="stats-section">
+      <h2>Progress Overview</h2>
+      <canvas id="progress-chart"></canvas>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Flower PWA</p>
+    <p>&copy; 2025 Flower Tracker</p>
   </footer>
 </body>
 </html>
