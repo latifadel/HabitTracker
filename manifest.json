@@ -1,15 +1,20 @@
 {
-    "short_name": "HabitLift",
-    "name": "HabitLift by Latif",
-    "icons": [
-        {
-            "src": "favicon.ico",
-            "sizes": "192x192",
-            "type": "image/png"
-        }
-    ],
-    "start_url": "/",
-    "display": "standalone",
-    "theme_color": "#007BFF",
-    "background_color": "#FFFFFF"
+  "name": "Flower",
+  "short_name": "Flower",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E8F5E9",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
