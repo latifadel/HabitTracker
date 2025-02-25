@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Flower - Habit Tracker PWA</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="manifest" href="./manifest.json" />
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Flower - Habit Tracker PWA</h1>
+  </header>
+
+  <main id="app">
+    <!-- Habit input and list section -->
+    <section class="habit-section">
+      <h2>Your Habits</h2>
+      <div class="habit-input">
+        <input type="text" id="new-habit-name" placeholder="Enter new habit name..." />
+        <button id="add-habit-btn">Add Habit</button>
+      </div>
+      <ul id="habits-list"></ul>
+    </section>
+
+    <!-- Flower display section -->
+    <section class="flower-section">
+      <h2>Selected Flower</h2>
+      <div id="flower-details">
+        <p>Select a habit to see its flower</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Flower PWA</p>
+  </footer>
+</body>
+</html>

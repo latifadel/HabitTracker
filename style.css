@@ -1,0 +1,91 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Layout */
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fdfdfd;
+}
+
+header, footer {
+  background: #ebf5e9;
+  text-align: center;
+  padding: 1rem;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 1rem;
+}
+
+/* Habit Section */
+.habit-section {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 0.5rem;
+  width: 300px;
+  max-width: 90%;
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+.habit-input {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.habit-input input {
+  flex: 1;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Habit List */
+#habits-list {
+  list-style: none;
+}
+
+#habits-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  padding: 0.3rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+/* Flower Section */
+.flower-section {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 0.5rem;
+  width: 300px;
+  max-width: 90%;
+  background: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#flower-pane {
+  margin: 1rem auto;
+}
+
+.wilted {
+  filter: grayscale(80%);
+  opacity: 0.7;
+}
