@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HabitLift by Latif</title>
+    <title>Flower - Habit Tracker</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <header>
-        <h1>HabitLift by Latif</h1>
+        <h1>Flower Habit Tracker</h1>
     </header>
     <main>
-        <div id="habit-list"></div>
-        <button onclick="addHabit()">Add New Habit</button>
+        <section id="garden">
+            <h2>Your Garden</h2>
+            <!-- Placeholder for flowers -->
+        </section>
+        <section id="controls">
+            <button id="water-button">Water Flowers</button>
+        </section>
     </main>
-    <template id="habit-template">
-        <div class="habit">
-            <span class="habit-name"></span>
-            <button class="delete">Delete</button>
-        </div>
-    </template>
+    <footer>
+        <p>Developed by [Your Name]</p>
+    </footer>
     <script src="app.js"></script>
 </body>
 </html>
