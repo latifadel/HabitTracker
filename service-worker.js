@@ -1,7 +1,6 @@
 // Simple service worker using Workbox or a custom approach
 
-// Cache name and assets to cache
-const CACHE_NAME = 'flower-pwa-v1';
+const CACHE_NAME = 'flower-tracker-pwa-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -9,15 +8,14 @@ const ASSETS_TO_CACHE = [
   './app.js',
   './manifest.json',
   './images/icon-192.png',
-  './images/icon-512.png'
+  './images/icon-512.png',
+  './images/logo.png'
 ];
 
 // Install event
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
   );
 });
 
