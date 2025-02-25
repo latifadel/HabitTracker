@@ -1,32 +1,14 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+@media (max-width: 600px) {
+  .flower {
+    width: 45%;
+    margin: 2.5%;
+  }
 }
 
-header, footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #f2f2f2;
+.flower-svg {
+  transition: transform 0.3s ease;
 }
 
-main {
-    padding: 20px;
-}
-
-#garden {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-#controls {
-    text-align: center;
-    margin-top: 20px;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+.flower:hover .flower-svg {
+  transform: scale(1.1);
 }
