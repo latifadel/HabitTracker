@@ -1,175 +1,99 @@
-// Flower Tracker - Habit Tracker PWA
-// Main JavaScript for the application
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flower Habit Tracker - Enhanced UI</title>
 
-// Data structure to hold habits in localStorage
-// Each habit has a name, lastWatered date, growthStage, optional flowerType, and daily logs
-let habits = [];
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
 
-// DOM Elements
-const habitList = document.getElementById('habits-list');
-const addHabitBtn = document.getElementById('add-habit-btn');
-const newHabitNameInput = document.getElementById('new-habit-name');
-const flowerDetails = document.getElementById('flower-details');
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-
-// Chart.js for stats
-let progressChart;
-
-// Load habits from localStorage on startup
-window.addEventListener('load', () => {
-  loadHabits();
-  renderHabitList();
-  initDarkMode();
-  initChart();
-});
-
-// Add new habit
-addHabitBtn.addEventListener('click', () => {
-  const name = newHabitNameInput.value.trim();
-  if (name) {
-    const habit = {
-      id: Date.now().toString(),
-      name,
-      lastWatered: null,
-      growthStage: 0,
-      flowerType: 'default',
-      logs: []
-    };
-    habits.push(habit);
-    saveHabits();
-    renderHabitList();
-    newHabitNameInput.value = '';
-  }
-});
-
-// Render habit list
-function renderHabitList() {
-  habitList.innerHTML = '';
-  habits.forEach(habit => {
-    const li = document.createElement('li');
-    li.textContent = habit.name;
-    li.addEventListener('click', () => selectHabit(habit.id));
-    habitList.appendChild(li);
-  });
-}
-
-// Select a habit and display flower details
-function selectHabit(habitId) {
-  const habit = habits.find(h => h.id === habitId);
-  if (!habit) return;
-
-  flowerDetails.innerHTML = `
-    <h3>${habit.name}</h3>
-    <div id="flower-pane">
-      <img 
-        src="./images/${habit.flowerType}.png" 
-        alt="Flower Image" 
-        class="${isWilted(habit) ? 'wilted' : ''}" 
-        style="width: 150px; height: auto; margin-bottom: 1rem;"
-      />
-      <p>Growth Stage: ${habit.growthStage}</p>
+  <!-- Link to styles.css -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-branding">
+      <!-- Simple Inline SVG Logo -->
+      <svg width="50" height="50" viewBox="0 0 512 512" aria-hidden="true">
+        <path fill="currentColor" d="M256,16C200,64,128,140,128,216c0,82.8,67.2,150,150,150s150-67.2,150-150C428,140,356,64,300,16H256z"/>
+        <circle fill="currentColor" cx="256" cy="216" r="40"/>
+      </svg>
+      <h1>Flower Habit Tracker</h1>
     </div>
-    <button id="water-flower-btn">Water this flower</button>
-    <button id="delete-habit-btn">Delete Habit</button>
-  `;
 
-  // Add event listener for watering
-  const waterFlowerBtn = document.getElementById('water-flower-btn');
-  waterFlowerBtn.addEventListener('click', () => waterHabit(habit.id));
+    <!-- THEME SWITCHER -->
+    <nav class="theme-switcher" aria-label="Theme Switcher">
+      <button class="theme-btn" data-theme="light">Light</button>
+      <button class="theme-btn" data-theme="dark">Dark</button>
+      <button class="theme-btn" data-theme="pink">Pink</button>
+      <button class="theme-btn" data-theme="blue">Blue</button>
+      <button class="theme-btn" data-theme="green">Green</button>
+    </nav>
+  </header>
 
-  // Add event listener for delete
-  const deleteHabitBtn = document.getElementById('delete-habit-btn');
-  deleteHabitBtn.addEventListener('click', () => deleteHabit(habit.id));
-}
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- TOP ACTION BUTTONS -->
+    <section class="top-actions">
+      <button id="open-modal-btn" class="primary-btn" aria-label="Add New Habit">+ Add New Habit</button>
+      <button id="reset-all-btn" class="secondary-btn" aria-label="Reset All Habits">Reset All Habits</button>
+    </section>
 
-// Check if the flower is wilted
-function isWilted(habit) {
-  if (!habit.lastWatered) return true;
-  const lastWateredDate = new Date(habit.lastWatered);
-  const now = new Date();
-  const daysDifference = (now - lastWateredDate) / (1000 * 3600 * 24);
-  return daysDifference > 2;
-}
+    <!-- GARDEN CONTAINER (Habit Cards) -->
+    <section class="garden-section">
+      <h2 class="section-title">Your Habits</h2>
+      <div id="garden" class="garden-container">
+        <!-- Habit cards will be dynamically inserted here by app.js -->
+      </div>
+    </section>
+  </main>
 
-// Water a habit
-function waterHabit(habitId) {
-  const habitIndex = habits.findIndex(h => h.id === habitId);
-  const now = new Date();
+  <!-- MODAL: Add a New Habit -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="close" aria-label="Close Add Habit Modal">&times;</button>
+      <h2 id="modal-title">Add a New Habit</h2>
 
-  if (habitIndex >= 0) {
-    // Update habit data
-    habits[habitIndex].lastWatered = now.toISOString();
-    habits[habitIndex].growthStage += 1;
-    habits[habitIndex].logs.push({ date: now.toISOString(), action: 'watered' });
+      <label for="habit-name">Habit Name</label>
+      <input
+        type="text"
+        id="habit-name"
+        placeholder="E.g., Morning Jog"
+        aria-label="Habit Name"
+      />
 
-    saveHabits();
-    renderHabitList();
-    selectHabit(habitId);
-    updateChart();
-  }
-}
+      <label for="times-per-day">Times Per Day</label>
+      <input
+        type="number"
+        id="times-per-day"
+        min="1"
+        value="1"
+        aria-label="Times Per Day for the Habit"
+      />
 
-// Delete a habit
-function deleteHabit(habitId) {
-  habits = habits.filter(h => h.id !== habitId);
-  saveHabits();
-  renderHabitList();
-  flowerDetails.innerHTML = `<p class="placeholder">Select a habit to see its flower</p>`;
-  updateChart();
-}
+      <label for="flower-type">Flower Type</label>
+      <select id="flower-type" aria-label="Select Flower Type">
+        <option value="rose">Rose</option>
+        <option value="tulip">Tulip</option>
+        <option value="sunflower">Sunflower</option>
+      </select>
 
-// Save habits to localStorage
-function saveHabits() {
-  localStorage.setItem('flowerHabits', JSON.stringify(habits));
-}
+      <button id="add-habit-btn" class="primary-btn" aria-label="Confirm Add Habit">
+        Add Habit
+      </button>
+    </div>
+  </div>
 
-// Load habits from localStorage
-function loadHabits() {
-  const storedHabits = JSON.parse(localStorage.getItem('flowerHabits')) || [];
-  habits = storedHabits;
-}
+  <!-- TOAST / SNACKBAR Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-// Initialize dark mode
-function initDarkMode() {
-  const isDark = localStorage.getItem('darkMode') === 'true';
-  if (isDark) {
-    document.body.classList.add('dark-mode');
-  }
-  darkModeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  });
-}
-
-// Initialize Chart
-function initChart() {
-  const ctx = document.getElementById('progress-chart').getContext('2d');
-  progressChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: habits.map(h => h.name),
-      datasets: [
-        {
-          label: 'Growth Stage',
-          data: habits.map(h => h.growthStage),
-          backgroundColor: '#7cb342'
-        }
-      ]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          grace: '5%'
-        }
-      }
-    }
-  });
-}
-
-// Update Chart
-function updateChart() {
-  progressChart.data.labels = habits.map(h => h.name);
-  progressChart.data.datasets[0].data = habits.map(h => h.growthStage);
-  progressChart.update();
-}
+  <!-- Link to app.js -->
+  <script src="app.js"></script>
+</body>
+</html>
