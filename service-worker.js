@@ -1,6 +1,6 @@
 // Simple service worker using Workbox or a custom approach
 
-const CACHE_NAME = 'flower-tracker-pwa-v2';
+const CACHE_NAME = 'flower-tracker';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
