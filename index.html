@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flower Habit Tracker - Enhanced UI</title>
+  <title>Flower Habit Tracker</title>
+
+  <!-- PWA / Manifest Setup -->
+  <meta name="theme-color" content="#6ba047" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Apple Touch Icons (iOS) -->
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png" />
+  <!-- You can also provide a 180x180 specifically for iOS homescreen -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
 
   <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,7 +22,7 @@
     rel="stylesheet"
   />
 
-  <!-- Link to styles.css -->
+  <!-- Link to your CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -93,7 +103,16 @@
   <!-- TOAST / SNACKBAR Container -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Link to app.js -->
+  <!-- Link to JS -->
   <script src="app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("Service Worker registered successfully"))
+        .catch((err) => console.log("Service Worker registration failed:", err));
+    }
+  </script>
 </body>
 </html>
