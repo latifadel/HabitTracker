@@ -1,6 +1,10 @@
 {
   "name": "Flower Habit Tracker",
   "short_name": "Flower",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6ba047",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -12,9 +16,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#6ba047",
-  "background_color": "#ffffff"
+  ]
 }
