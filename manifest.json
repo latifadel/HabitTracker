@@ -1,5 +1,5 @@
 {
-  "name": "Flower Tracker - Habit Tracker PWA",
+  "name": "FlowerHabit",
   "short_name": "FlowerTracker",
   "start_url": "./index.html",
   "display": "standalone",
