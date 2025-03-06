@@ -1,99 +1,372 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flower Habit Tracker - Enhanced UI</title>
+/*******************************************************
+ * FLOWER HABIT TRACKER - Enhanced UI
+ * - Water/Unwater/Reset
+ * - Multiple Themes
+ * - Distinct Flower Shapes & Animations
+ * - LocalStorage
+ * - Toast Notifications
+ *******************************************************/
 
-  <!-- Google Fonts: Poppins -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
-    rel="stylesheet"
-  />
+// SELECTORS
+const openModalBtn     = document.getElementById("open-modal-btn");
+const closeModalBtn    = document.getElementById("close-modal-btn");
+const modal            = document.getElementById("modal");
+const addHabitBtn      = document.getElementById("add-habit-btn");
+const habitNameInput   = document.getElementById("habit-name");
+const timesPerDayInput = document.getElementById("times-per-day");
+const flowerTypeSelect = document.getElementById("flower-type");
+const gardenContainer  = document.getElementById("garden");
+const toastContainer   = document.getElementById("toast-container");
+const resetAllBtn      = document.getElementById("reset-all-btn");
+const themeButtons     = document.querySelectorAll(".theme-btn");
 
-  <!-- Link to styles.css -->
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <!-- HEADER -->
-  <header class="app-header">
-    <div class="app-branding">
-      <!-- Simple Inline SVG Logo -->
-      <svg width="50" height="50" viewBox="0 0 512 512" aria-hidden="true">
-        <path fill="currentColor" d="M256,16C200,64,128,140,128,216c0,82.8,67.2,150,150,150s150-67.2,150-150C428,140,356,64,300,16H256z"/>
-        <circle fill="currentColor" cx="256" cy="216" r="40"/>
-      </svg>
-      <h1>Flower Habit Tracker</h1>
-    </div>
+// GLOBAL DATA
+let habits = []; // store habit objects
 
-    <!-- THEME SWITCHER -->
-    <nav class="theme-switcher" aria-label="Theme Switcher">
-      <button class="theme-btn" data-theme="light">Light</button>
-      <button class="theme-btn" data-theme="dark">Dark</button>
-      <button class="theme-btn" data-theme="pink">Pink</button>
-      <button class="theme-btn" data-theme="blue">Blue</button>
-      <button class="theme-btn" data-theme="green">Green</button>
-    </nav>
-  </header>
+/*******************************************************
+ * INIT
+ *******************************************************/
+window.addEventListener("DOMContentLoaded", () => {
+  loadHabitsFromStorage();
+  loadThemeFromStorage();
+  renderHabits();
+});
 
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-    <!-- TOP ACTION BUTTONS -->
-    <section class="top-actions">
-      <button id="open-modal-btn" class="primary-btn" aria-label="Add New Habit">+ Add New Habit</button>
-      <button id="reset-all-btn" class="secondary-btn" aria-label="Reset All Habits">Reset All Habits</button>
-    </section>
+/*******************************************************
+ * THEME SWITCHER
+ *******************************************************/
+themeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const selectedTheme = btn.dataset.theme;
+    // Remove old theme classes
+    document.body.classList.remove(
+      "theme-dark",
+      "theme-pink",
+      "theme-blue",
+      "theme-green"
+    );
+    if (selectedTheme !== "light") {
+      document.body.classList.add(`theme-${selectedTheme}`);
+    }
+    localStorage.setItem("flowerTheme", selectedTheme);
+  });
+});
 
-    <!-- GARDEN CONTAINER (Habit Cards) -->
-    <section class="garden-section">
-      <h2 class="section-title">Your Habits</h2>
-      <div id="garden" class="garden-container">
-        <!-- Habit cards will be dynamically inserted here by app.js -->
-      </div>
-    </section>
-  </main>
+function loadThemeFromStorage() {
+  const savedTheme = localStorage.getItem("flowerTheme") || "light";
+  if (savedTheme !== "light") {
+    document.body.classList.add(`theme-${savedTheme}`);
+  }
+}
 
-  <!-- MODAL: Add a New Habit -->
-  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-content">
-      <button id="close-modal-btn" class="close" aria-label="Close Add Habit Modal">&times;</button>
-      <h2 id="modal-title">Add a New Habit</h2>
+/*******************************************************
+ * MODAL (ADD HABIT)
+ *******************************************************/
+openModalBtn.addEventListener("click", () => {
+  openHabitModal();
+});
+closeModalBtn.addEventListener("click", closeHabitModal);
+window.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    closeHabitModal();
+  }
+});
 
-      <label for="habit-name">Habit Name</label>
-      <input
-        type="text"
-        id="habit-name"
-        placeholder="E.g., Morning Jog"
-        aria-label="Habit Name"
-      />
+function openHabitModal() {
+  modal.classList.add("show");
+  habitNameInput.focus();
+}
+function closeHabitModal() {
+  modal.classList.remove("show");
+  // Reset fields
+  habitNameInput.value = "";
+  timesPerDayInput.value = 1;
+  flowerTypeSelect.value = "rose";
+}
 
-      <label for="times-per-day">Times Per Day</label>
-      <input
-        type="number"
-        id="times-per-day"
-        min="1"
-        value="1"
-        aria-label="Times Per Day for the Habit"
-      />
+/*******************************************************
+ * ADD HABIT
+ *******************************************************/
+addHabitBtn.addEventListener("click", () => {
+  const name = habitNameInput.value.trim();
+  const timesPerDay = parseInt(timesPerDayInput.value, 10) || 1;
+  const flowerType = flowerTypeSelect.value;
 
-      <label for="flower-type">Flower Type</label>
-      <select id="flower-type" aria-label="Select Flower Type">
-        <option value="rose">Rose</option>
-        <option value="tulip">Tulip</option>
-        <option value="sunflower">Sunflower</option>
-      </select>
+  if (!name) {
+    showToast("Please enter a habit name.");
+    return;
+  }
+  if (timesPerDay < 1) {
+    showToast("Times Per Day must be at least 1.");
+    return;
+  }
 
-      <button id="add-habit-btn" class="primary-btn" aria-label="Confirm Add Habit">
-        Add Habit
-      </button>
-    </div>
-  </div>
+  const newHabit = {
+    id: Date.now(),
+    name,
+    dailyGoal: timesPerDay,
+    dailyCount: 0,
+    growthStage: 0,
+    maxGrowthStage: 5,
+    flowerType,
+    sideNotes: "",
+  };
 
-  <!-- TOAST / SNACKBAR Container -->
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  habits.push(newHabit);
+  saveHabitsToStorage();
+  renderHabits();
+  showToast(`Added new habit: "${name}"`);
+  closeHabitModal();
+});
 
-  <!-- Link to app.js -->
-  <script src="app.js"></script>
-</body>
-</html>
+/*******************************************************
+ * RENDER HABITS
+ *******************************************************/
+function renderHabits() {
+  gardenContainer.innerHTML = "";
+
+  habits.forEach((habit) => {
+    // BUILD CARD
+    const card = document.createElement("div");
+    card.className = "habit-card";
+
+    // TITLE
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "habit-title";
+    titleDiv.textContent = habit.name;
+    card.appendChild(titleDiv);
+
+    // DESCRIPTION
+    const descDiv = document.createElement("div");
+    descDiv.className = "habit-description";
+    descDiv.textContent = `Goal: ${habit.dailyGoal} | Growth: ${habit.growthStage}/${habit.maxGrowthStage}`;
+    card.appendChild(descDiv);
+
+    // FLOWER
+    const flowerElem = buildFlower(habit.flowerType, habit.growthStage);
+    card.appendChild(flowerElem);
+
+    // PROGRESS BAR
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+    const progressFill = document.createElement("div");
+    progressFill.className = "progress-fill";
+    const dailyProgress = (habit.dailyCount / habit.dailyGoal) * 100;
+    progressFill.style.width = `${Math.min(dailyProgress, 100)}%`;
+    progressBar.appendChild(progressFill);
+    card.appendChild(progressBar);
+
+    // FOOTER
+    const footer = document.createElement("div");
+    footer.className = "habit-footer";
+
+    // Side notes
+    const notesArea = document.createElement("textarea");
+    notesArea.className = "side-notes";
+    notesArea.placeholder = "Write side notes here...";
+    notesArea.value = habit.sideNotes || "";
+    notesArea.addEventListener("change", () => {
+      habit.sideNotes = notesArea.value;
+      saveHabitsToStorage();
+    });
+    footer.appendChild(notesArea);
+
+    // ACTIONS
+    const actionDiv = document.createElement("div");
+    actionDiv.className = "habit-actions";
+
+    // Water button
+    const waterBtn = document.createElement("button");
+    waterBtn.className = "secondary-btn";
+    waterBtn.textContent = `Water (${habit.dailyCount}/${habit.dailyGoal})`;
+    waterBtn.addEventListener("click", () => waterHabit(habit, flowerElem, progressFill, waterBtn));
+    actionDiv.appendChild(waterBtn);
+
+    // Unwater button
+    const unwaterBtn = document.createElement("button");
+    unwaterBtn.className = "unwater-btn";
+    unwaterBtn.textContent = "Unwater";
+    unwaterBtn.addEventListener("click", () => unwaterHabit(habit, flowerElem, progressFill, waterBtn));
+    actionDiv.appendChild(unwaterBtn);
+
+    // Reset button
+    const resetBtn = document.createElement("button");
+    resetBtn.className = "reset-btn";
+    resetBtn.textContent = "Reset to 0";
+    resetBtn.addEventListener("click", () => resetHabit(habit, flowerElem, progressFill, waterBtn));
+    actionDiv.appendChild(resetBtn);
+
+    // Delete button
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.addEventListener("click", () => deleteHabit(habit.id));
+    actionDiv.appendChild(deleteBtn);
+
+    footer.appendChild(actionDiv);
+    card.appendChild(footer);
+
+    gardenContainer.appendChild(card);
+  });
+}
+
+/*******************************************************
+ * BUILD FLOWER
+ *******************************************************/
+function buildFlower(flowerType, growthStage) {
+  const container = document.createElement("div");
+  container.className = `flower-container ${flowerType} grow-stage-${growthStage}`;
+
+  let petalCount = 0;
+  if (flowerType === "rose") {
+    petalCount = 6;
+  } else if (flowerType === "tulip") {
+    petalCount = 4;
+  } else if (flowerType === "sunflower") {
+    petalCount = 9;
+  }
+  for (let i = 0; i < petalCount; i++) {
+    const petal = document.createElement("div");
+    petal.className = "petal";
+    container.appendChild(petal);
+  }
+  return container;
+}
+
+/*******************************************************
+ * WATER HABIT
+ *******************************************************/
+function waterHabit(habit, flowerElem, progressElem, waterBtn) {
+  if (habit.dailyCount < habit.dailyGoal) {
+    habit.dailyCount++;
+    showToast(`Watered "${habit.name}" (${habit.dailyCount}/${habit.dailyGoal})`);
+
+    // If we hit dailyGoal, increase growth stage
+    if (habit.dailyCount === habit.dailyGoal) {
+      if (habit.growthStage < habit.maxGrowthStage) {
+        habit.growthStage++;
+        updateFlowerGrowth(flowerElem, habit.growthStage);
+        showToast(`"${habit.name}" grew to stage ${habit.growthStage}!`);
+      }
+    }
+  } else {
+    showToast(`"${habit.name}" is already fully watered today.`);
+  }
+
+  const dailyProgress = (habit.dailyCount / habit.dailyGoal) * 100;
+  progressElem.style.width = `${Math.min(dailyProgress, 100)}%`;
+  waterBtn.textContent = `Water (${habit.dailyCount}/${habit.dailyGoal})`;
+
+  saveHabitsToStorage();
+  renderHabits();
+}
+
+/*******************************************************
+ * UNWATER HABIT
+ *******************************************************/
+function unwaterHabit(habit, flowerElem, progressElem, waterBtn) {
+  if (habit.dailyCount > 0) {
+    habit.dailyCount--;
+    showToast(`Unwatered "${habit.name}" (${habit.dailyCount}/${habit.dailyGoal})`);
+
+    // If we just went below dailyGoal from dailyGoal, revert growth stage
+    if (habit.dailyCount === habit.dailyGoal - 1) {
+      if (habit.growthStage > 0) {
+        habit.growthStage--;
+        updateFlowerGrowth(flowerElem, habit.growthStage);
+        showToast(`"${habit.name}" reverted to stage ${habit.growthStage}`);
+      }
+    }
+  } else {
+    showToast(`No water left to remove for "${habit.name}".`);
+  }
+
+  const dailyProgress = (habit.dailyCount / habit.dailyGoal) * 100;
+  progressElem.style.width = `${Math.min(dailyProgress, 100)}%`;
+  waterBtn.textContent = `Water (${habit.dailyCount}/${habit.dailyGoal})`;
+
+  saveHabitsToStorage();
+  renderHabits();
+}
+
+/*******************************************************
+ * RESET HABIT
+ *******************************************************/
+function resetHabit(habit, flowerElem, progressElem, waterBtn) {
+  habit.dailyCount = 0;
+  habit.growthStage = 0;
+  updateFlowerGrowth(flowerElem, 0);
+  progressElem.style.width = "0%";
+  waterBtn.textContent = `Water (0/${habit.dailyGoal})`;
+
+  showToast(`"${habit.name}" reset to 0.`);
+  saveHabitsToStorage();
+  renderHabits();
+}
+
+/*******************************************************
+ * UPDATE FLOWER GROWTH
+ *******************************************************/
+function updateFlowerGrowth(flowerElem, newStage) {
+  // Remove old stage classes
+  for (let i = 0; i <= 5; i++) {
+    flowerElem.classList.remove(`grow-stage-${i}`);
+  }
+  // Add new stage
+  flowerElem.classList.add(`grow-stage-${newStage}`);
+}
+
+/*******************************************************
+ * DELETE HABIT
+ *******************************************************/
+function deleteHabit(habitId) {
+  if (!confirm("Are you sure you want to delete this habit?")) {
+    return;
+  }
+  habits = habits.filter((h) => h.id !== habitId);
+  saveHabitsToStorage();
+  renderHabits();
+  showToast("Habit deleted.");
+}
+
+/*******************************************************
+ * RESET ALL HABITS
+ *******************************************************/
+resetAllBtn.addEventListener("click", () => {
+  if (!confirm("Are you sure you want to reset ALL habits? This clears all data.")) {
+    return;
+  }
+  localStorage.clear();
+  habits = [];
+  renderHabits();
+  showToast("All habits have been reset.");
+});
+
+/*******************************************************
+ * LOCAL STORAGE
+ *******************************************************/
+function saveHabitsToStorage() {
+  localStorage.setItem("flowerHabits", JSON.stringify(habits));
+}
+function loadHabitsFromStorage() {
+  const data = localStorage.getItem("flowerHabits");
+  if (data) {
+    habits = JSON.parse(data);
+  }
+}
+
+/*******************************************************
+ * TOAST / SNACKBAR
+ *******************************************************/
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    if (toastContainer.contains(toast)) {
+      toastContainer.removeChild(toast);
+    }
+  }, 3000);
+}
